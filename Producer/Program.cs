@@ -15,9 +15,18 @@ channel.QueueDeclare(queue:"LetterBox",
     autoDelete:false,
     arguments:null);
 
-var message ="This my first message in rabbitMQ";
+var random = new Random();
+var messageId = 1;
 
-var encodingMessage = Encoding.UTF8.GetBytes(message);
+while (true)
+{
+    var publishingTime = random.Next(1,4);
+    var message = $"Sending MessageId: {messageId}";
+    var body = Encoding.UTF8.GetBytes(message);
 
-channel.BasicPublish("","LetterBox", null, encodingMessage);
-Console.WriteLine($"Published message: {message}");
+    channel.BasicPublish("","LetterBox", null, body);
+    Console.WriteLine($"Send message: {message}"); 
+
+    Task.Delay(TimeSpan.FromSeconds(publishingTime)).Wait();
+    messageId++;
+}
